@@ -25,9 +25,9 @@ void extract_data(int imgHeight, int imgWidth, int imgWidthF, unsigned char *img
 		{
 			window_offset = 0;
 
-			for (int fy = -(FILTER_SIZE - 1) / 2; fy < (FILTER_SIZE - 1) / 2; fy++)
+			for (int fy = 0 ; fy < (FILTER_SIZE ) ; fy++)
 			{
-				for (int fx = -(FILTER_SIZE - 1) / 2; fx < (FILTER_SIZE - 1) / 2; fx++)
+				for (int fx = 0; fx < (FILTER_SIZE ) ; fx++)
 				{
 					//creating matrices for every channel so we can filter them 
 					R[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 0));
@@ -40,9 +40,9 @@ void extract_data(int imgHeight, int imgWidth, int imgWidthF, unsigned char *img
 			}
 
 			//filtering
-			ch_result[0] = medianFilter(R);
-			ch_result[1] = medianFilter(G);
-			ch_result[2] = medianFilter(B);
+			ch_result[0] = median_filter_ref(R);
+			ch_result[1] = median_filter_ref(G);
+			ch_result[2] = median_filter_ref(B);
 
 			//saveing results
 			*(imgDst + wr_base + 0) = (unsigned char)(ch_result[0]);
@@ -50,7 +50,7 @@ void extract_data(int imgHeight, int imgWidth, int imgWidthF, unsigned char *img
 			*(imgDst + wr_base + 2) = (unsigned char)(ch_result[2]);
 
 
-			//shifting over to the enxt pixel
+			//shifting over to the next pixel
 			wr_base = wr_base + 3;
 			rd_base = rd_base + 3;
 		}
@@ -102,3 +102,19 @@ void img_read_write_test(int imgHeight, int imgWidth, int imgWidthF, unsigned ch
 		rd_base = rd_base + 4 * 3;
 	}
 }
+
+/*
+int border_correction(int imgWidthF, int imgHeight, int pos, int window_offset) {
+	int correction = 0;
+	int row = pos%imgWidthF;
+	int col = pos - row*imgWidthF;
+
+	if (col == 0 || col == 1) correction =correction+ col;
+	if (col = imgWidthF - 2 || imgWidthF - 1) correction =correction -col;
+
+	if (row == 0 || row == 1) correction = correction + row*imgWidthF;
+	if (row == imgHeight-2 || row == imgHeight-1)correction = correction - row*imgWidthF;
+
+	return correction;
+};
+*/

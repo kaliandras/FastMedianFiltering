@@ -42,8 +42,8 @@ void main()
 	unsigned char *imgSrcExt;
 	int imgWidthF = imgWidth + FILTER_SIZE - 1;
 	int imgHeightF = imgHeight + FILTER_SIZE - 1;
-	int imgFOfssetW = 0;	//(FILTER_SIZE -1)/2;
-	int imgFOfssetH = 0;	//(FILTER_SIZE -1)/2;
+	int imgFOfssetW =  (FILTER_SIZE -1)/2;
+	int imgFOfssetH = (FILTER_SIZE - 1) / 2;
 	imgSrcExt = (unsigned char *)(_aligned_malloc(3 * imgWidthF*imgHeightF * sizeof(unsigned char), 32));
 	int row, col;
 
@@ -83,7 +83,7 @@ void main()
 	s0 = clock();
 	for (int r = 0; r < RUNS; r++)
 	{
-		img_read_write_test(imgHeight, imgWidth, imgWidthF, imgSrcExt, imgRes);
+		extract_data(imgHeight, imgWidth, imgWidthF, imgSrcExt, imgRes);
 		printf("%d\n", r);
 	}
 
@@ -114,7 +114,7 @@ void main()
 
 	ret = ilSetData(imgData);
 	ilEnable(IL_FILE_OVERWRITE);
-	ilSaveImage((const char*)("output.jpg"));
+	ilSaveImage((const char*)("output.bmp"));
 	ilDeleteImages(1, &ilImg);
 }
 
@@ -138,9 +138,9 @@ int main(void) {
 	clock_t start, stop;
 
 	start = clock();
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		result = medianFilter(matrix);
+		result = median_filter_ref(matrix);
 	}
 	stop = clock();
 
