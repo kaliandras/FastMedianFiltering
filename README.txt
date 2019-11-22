@@ -18,6 +18,6 @@ Algorithm Description for median filtering:
 
 Plain c implementation.
 	This implementation is created as a reference model, so acceleration can be measured with different implementations.
-	It loads and saves an image with the DevIL library, the image is passed through the extract_data() function. It will step through the image, 
-	while it separates color channels and creates matrices for the filtering. 
+	It loads and saves an image with the DevIL library, the image is passed through the extract_data() function. 
+	It will step through the image, while it separates color channels and creates matrices for the filtering. 
 	The filtering is preformed for every color channel, separatly with the medianFilter() function.
