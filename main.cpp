@@ -83,7 +83,7 @@ void main()
 	s0 = clock();
 	for (int r = 0; r < RUNS; r++)
 	{
-		extract_data(imgHeight, imgWidth, imgWidthF, imgSrcExt, imgRes);
+		img_filter(imgHeight, imgWidth, imgWidthF, imgSrcExt, imgRes);
 		printf("%d\n", r);
 	}
 
@@ -140,7 +140,7 @@ int main(void) {
 	start = clock();
 	for (int i = 0; i < 1; i++)
 	{
-		result = median_filter_ref(matrix);
+		result = median_filter(matrix);
 	}
 	stop = clock();
 

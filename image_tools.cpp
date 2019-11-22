@@ -1,6 +1,7 @@
 #include "func.h"
+#include <stdio.h>
 
-void extract_data(int imgHeight, int imgWidth, int imgWidthF, unsigned char *imgSrcExt, unsigned char *imgDst)
+void img_filter(int imgHeight, int imgWidth, int imgWidthF, unsigned char *imgSrcExt, unsigned char *imgDst)
 {
 	int wr_base;				//pixel specific address for writing the results to the output
 	int rd_base;				//pixel specific address for reading the values from the input
@@ -40,9 +41,9 @@ void extract_data(int imgHeight, int imgWidth, int imgWidthF, unsigned char *img
 			}
 
 			//filtering
-			ch_result[0] = median_filter_ref(R);
-			ch_result[1] = median_filter_ref(G);
-			ch_result[2] = median_filter_ref(B);
+			ch_result[0] = median_filter(R);
+			ch_result[1] = median_filter(G);
+			ch_result[2] = median_filter(B);
 
 			//saveing results
 			*(imgDst + wr_base + 0) = (unsigned char)(ch_result[0]);
@@ -103,18 +104,72 @@ void img_read_write_test(int imgHeight, int imgWidth, int imgWidthF, unsigned ch
 	}
 }
 
-/*
-int border_correction(int imgWidthF, int imgHeight, int pos, int window_offset) {
-	int correction = 0;
-	int row = pos%imgWidthF;
-	int col = pos - row*imgWidthF;
+void img_filter_test(int imgHeight, int imgWidth, int imgWidthF, unsigned char *imgSrcExt, unsigned char *imgDst)
+{
+	int wr_base;				//pixel specific address for writing the results to the output
+	int rd_base;				//pixel specific address for reading the values from the input
+	int window_offset;			//address offset for traversing in the filtering window
+	int ch_result[3];			//color channels filtered value
 
-	if (col == 0 || col == 1) correction =correction+ col;
-	if (col = imgWidthF - 2 || imgWidthF - 1) correction =correction -col;
+								//matrices that collects a color channel's data so it can be feeded to the filter
+	int R[FILTER_SIZE][FILTER_SIZE];
+	int G[FILTER_SIZE][FILTER_SIZE];
+	int B[FILTER_SIZE][FILTER_SIZE];
 
-	if (row == 0 || row == 1) correction = correction + row*imgWidthF;
-	if (row == imgHeight-2 || row == imgHeight-1)correction = correction - row*imgWidthF;
+	int error_cnt = 0;
 
-	return correction;
-};
-*/
+
+	//traversing trough the image
+	for (int row = 0; row < imgHeight; row++)
+	{
+		//base addresses for "pixels", both for read and write scenario
+		wr_base = row*imgWidth * 3;
+		rd_base = row*imgWidthF * 3;
+
+
+		for (int col = 0; col < imgWidth; col++)
+		{
+			window_offset = 0;
+
+			for (int fy = 0; fy < (FILTER_SIZE); fy++)
+			{
+				for (int fx = 0; fx < (FILTER_SIZE); fx++)
+				{
+					//creating matrices for every channel so we can filter them 
+					R[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 0));
+					G[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 1));
+					B[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 2));
+
+					window_offset = window_offset + 3;
+				}
+				window_offset = window_offset - 5 * 3 + imgWidthF * 3;
+			}
+
+			//filtering
+			ch_result[0] = median_filter_ref(R);
+			ch_result[1] = median_filter_ref(G);
+			ch_result[2] = median_filter_ref(B);
+
+			//detect errors in filtering:
+			if (median_filter(R) != ch_result[0]) { 
+				error_cnt++;
+				//printf("ERROR:pos:%d row:%d col:%d", rd_base, rd_base%imgWidthF,rd_base-rd_base%imgWidthF*imgWidthF);
+			}
+
+			//saveing results
+			*(imgDst + wr_base + 0) = (unsigned char)(ch_result[0]);
+			*(imgDst + wr_base + 1) = (unsigned char)(ch_result[1]);
+			*(imgDst + wr_base + 2) = (unsigned char)(ch_result[2]);
+
+
+			//shifting over to the next pixel
+			wr_base = wr_base + 3;
+			rd_base = rd_base + 3;
+		}
+		//stepping over the padding
+		wr_base = wr_base + 4 * 3;
+		rd_base = rd_base + 4 * 3;
+	}
+
+	printf("ERROR COUNTER:%d", error_cnt);
+}
