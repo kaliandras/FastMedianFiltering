@@ -11,7 +11,8 @@ Algorithm Description for median filtering:
 
 	1. Sort columns in an ascending order.
 	2. Sort rows in an ascending order.
-		Its not necessary to sort all elements in every row, only thjose elements need tob e sorted that will be used later.
+		Its not necessary to sort all elements in every row, only those elements need to be sorted that will be used agian.
+		(Aka: there are under the diagonals defined by s in step 3!)
 	3. Sort diagonals in an ascending order. Diagonals are defined by s and k.
 		s=k*r+c where k=1...M and s=k(*M+1)...k(*M-1)+N-1
 	4. Median is the c=M r=M component.
