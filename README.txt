@@ -25,7 +25,7 @@ Plain C implementation:
 	TODO:
 	1. testing for errors
 	2. implementing partial sorting for sorting rows
-	3. eliminationg diagonal sorting, and replacing: 
+	3. eliminating diagonal sorting, and replacing it with shortened commands: 
 		s=3 find max
 		s=4 find median
 		s=5 find min
