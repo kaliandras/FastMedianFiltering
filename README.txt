@@ -16,7 +16,7 @@ Algorithm Description for median filtering:
 		s=k*r+c where k=1...M and s=k(*M+1)...k(*M-1)+N-1
 	4. Median is the c=M r=M component.
 
-Plain c implementation.
+Plain C implementation:
 	This implementation is created as a reference model, so acceleration can be measured with different implementations.
 	It loads and saves an image with the DevIL library, the image is passed through the img_filter() function. 
 	It will step through the image, while it separates color channels and creates matrices for the filtering. 
