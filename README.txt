@@ -11,12 +11,13 @@ Algorithm Description for median filtering:
 
 	1. Sort columns in an ascending order.
 	2. Sort rows in an ascending order.
-		Its not necessary to sort all elements in every row, only thjose elements need tob e sorted that will be used later.
+		Its not necessary to sort all elements in every row, only those elements need to be sorted that will be used agian.
+		(Aka: there are under the diagonals defined by s in step 3!)
 	3. Sort diagonals in an ascending order. Diagonals are defined by s and k.
 		s=k*r+c where k=1...M and s=k(*M+1)...k(*M-1)+N-1
 	4. Median is the c=M r=M component.
 
-Plain c implementation.
+Plain C implementation:
 	This implementation is created as a reference model, so acceleration can be measured with different implementations.
 	It loads and saves an image with the DevIL library, the image is passed through the img_filter() function. 
 	It will step through the image, while it separates color channels and creates matrices for the filtering. 
@@ -25,7 +26,7 @@ Plain c implementation.
 	TODO:
 	1. testing for errors
 	2. implementing partial sorting for sorting rows
-	3. eliminationg diagonal sorting, and replacing: 
+	3. eliminating diagonal sorting, and replacing it with shortened commands: 
 		s=3 find max
 		s=4 find median
 		s=5 find min
