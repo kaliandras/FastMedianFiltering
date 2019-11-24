@@ -128,27 +128,28 @@ int main(void) {
 
 	int matrix[5][5]=
 	{
-		{1,2,3,6,0},
-		{2,3,4,6,0},
-		{3,4,5,6,0},
-		{4,5,1,6,0},
-		{5,1,2,6,0}
+		{0,0,0,0,0},
+		{0,0,0,0,0},
+		{134,122,122,123,120},
+		{132,120,121,122,119},
+		{132,120,121,121,119}
 	};
-	
-	clock_t start, stop;
 
-	start = clock();
-	for (int i = 0; i < 1; i++)
+	int tp[5][5] =
 	{
-		result = median_filter(matrix);
-	}
-	stop = clock();
+		{0,0,0,0,0},
+		{0,0,0,0,0},
+		{134,122,122,123,120},
+		{132,120,121,122,119},
+		{132,120,121,121,119}
+	};
 
-	double d0 = (double)(stop - start) / (CLOCKS_PER_SEC);
+	result = median_filter(matrix);
+	printf("\nresult= %d\n\n",result);
 
+	result = median_filter_ref(tp);
+	printf("ref= %d\n\n", result);
 
-	printf("result= %d\n\n",result);
-	printf("AVG runtime: %lf\n\n",d0);
 
 
 	return 0;

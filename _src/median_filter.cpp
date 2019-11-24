@@ -5,144 +5,231 @@
 using namespace std;
 
 
-
 int median_filter(int matrix[FILTER_SIZE][FILTER_SIZE])
 {
 	int result = 0;
 	int temp[FILTER_SIZE][FILTER_SIZE];
 	int M = (FILTER_SIZE - 1) / 2;
 
+			//printf("original:\n");
+			//for (int i = 0; i < 5; i++)
+			//{
+			//	for (int j = 0; j < 5; j++)
+			//	{
+			//		printf("%d\t", matrix[i][j]);
+			//	}
+			//	printf("\n");
+			//}
+			//printf("\n");
 
 	//sort columns
-	for (int i = 0; i < FILTER_SIZE; i++)
-	{
-		sort_column(matrix, 0, i);
-	}
-
+	sort_column(matrix, 0);
+	sort_column(matrix, 1);
+	sort_column(matrix, 2);
+	sort_column(matrix, 3);
+	sort_column(matrix, 4);
 
 	//sort rows
-	for (int i = 0; i < FILTER_SIZE; i++)
-	{
-		sort_row(matrix, i, 0);
-	}
-
+	psort_row(matrix, 0,0);
+	psort_row(matrix, 1,0);
+	psort_row(matrix, 2,0);
+	psort_row(matrix, 3,3);
+	psort_row(matrix, 4,2);
 
 	//sort diagonals
-	//for (int k = 1; k < M + 1; k++)
-	//{
-	//	for (int s = k*(M + 1); s < k*(M - 1) + FILTER_SIZE; s++)
-	//	{
-	//		sort_diagonals(matrix, k, s, -1);
-	//	}
-	//}
-	result = sort_diagonals_shortcut(matrix);
+	result = get_median(matrix);
 	return result;
-
-	//found the median
-	//return result = matrix[M][M];
 	
 }
 
 
-void sort_column(int mat[FILTER_SIZE][FILTER_SIZE], int row, int col) {
-	int min = 256;
-	int pos = row;
+void sort_column(int mat[FILTER_SIZE][FILTER_SIZE], int col) {
+	int min;
+	int pos;
 	int temp;
 
-	for (int i = row; i < FILTER_SIZE; i++)
+	min = 256;
+	for (int i = 0; i < FILTER_SIZE; i++)
 	{
 		if (min > mat[i][col]) {
 			pos = i;
 			min = mat[i][col];
 		}
 	}
-
-	temp = mat[row][col];
-	mat[row][col] = mat[pos][col];
+	temp = mat[0][col];
+	mat[0][col] = mat[pos][col];
 	mat[pos][col] = temp;
 
-	row++;
-	if (row == FILTER_SIZE) return;
-	else sort_column(mat, col, row);
+	min = 256;
+	for (int i = 1; i < FILTER_SIZE; i++)
+	{
+		if (min > mat[i][col]) {
+			pos = i;
+			min = mat[i][col];
+		}
+	}
+	temp = mat[1][col];
+	mat[1][col] = mat[pos][col];
+	mat[pos][col] = temp;
+
+	min = 256;
+	for (int i = 2; i < FILTER_SIZE; i++)
+	{
+		if (min > mat[i][col]) {
+			pos = i;
+			min = mat[i][col];
+		}
+	}
+	temp = mat[2][col];
+	mat[2][col] = mat[pos][col];
+	mat[pos][col] = temp;
+
+	min = 256;
+	for (int i = 3; i < FILTER_SIZE; i++)
+	{
+		if (min > mat[i][col]) {
+			pos = i;
+			min = mat[i][col];
+		}
+	}
+	temp = mat[3][col];
+	mat[3][col] = mat[pos][col];
+	mat[pos][col] = temp;
+
 }
 
-void sort_row(int mat[FILTER_SIZE][FILTER_SIZE], int row, int col) {
-	int min = 256;
-	int pos = col;
+void psort_row(int mat[FILTER_SIZE][FILTER_SIZE], int row, int n) {
+	int min;
+	int pos;
 	int temp;
 
-	for (int i = col; i < FILTER_SIZE; i++)
+	min = 256;
+	for (int i = 0; i < FILTER_SIZE; i++)
 	{
 		if (min > mat[row][i]) {
 			pos = i;
 			min = mat[row][i];
 		}
 	}
-
-	temp = mat[row][col];
-	mat[row][col] = mat[row][pos];
+	temp = mat[row][0];
+	mat[row][0] = mat[row][pos];
 	mat[row][pos] = temp;
 
-	col++;
-	if (col == FILTER_SIZE) return;
-	else sort_row(mat, row, col);
+	min = 256;
+	for (int i = 1; i < FILTER_SIZE; i++)
+	{
+		if (min > mat[row][i]) {
+			pos = i;
+			min = mat[row][i];
+		}
+	}
+	temp = mat[row][1];
+	mat[row][1] = mat[row][pos];
+	mat[row][pos] = temp;
+
+	if (n == 2) return;
+
+	min = 256;
+	for (int i = 2; i < FILTER_SIZE; i++)
+	{
+		if (min > mat[row][i]) {
+			pos = i;
+			min = mat[row][i];
+		}
+	}
+	temp = mat[row][2];
+	mat[row][2] = mat[row][pos];
+	mat[row][pos] = temp;
+
+	if (n == 3) return;
+
+	min = 256;
+	for (int i = 3; i < FILTER_SIZE; i++)
+	{
+		if (min > mat[row][i]) {
+			pos = i;
+			min = mat[row][i];
+		}
+	}
+	temp = mat[row][3];
+	mat[row][3] = mat[row][pos];
+	mat[row][pos] = temp;
 }
 
-void sort_diagonals(int mat[FILTER_SIZE][FILTER_SIZE], int k, int s, int step_offset) {
-	//line to be sorted: s=k*r+c
-	// k=1 s=[3,4,5]  || k=2 s=[6]
-	int row, col;
-	int startr, startc;
-	int max = -1;
-	int posc, posr;
-	int temp;
-	bool done = false;
+int get_median(int mat[FILTER_SIZE][FILTER_SIZE]) {
+	int pos;
 
-	row = s / k;
-	col = 0;
-	if (row > 4) {
-		row = 4;
-		col = s - row*k;
+	int max = -1;
+	int mid = -1;
+	int min = 256;
+
+	//s=3
+	for (int i = 0; i < 4; i++)
+	{
+		if (max < mat[3 - i][0 + i]) max = mat[3 - i][0 + i];
 	}
 
-	row = row - step_offset;
-	col = col + step_offset*k;
+	//s=4
+	int temp[5];
+	int mid_max;
+	int tp;
 
-	if (row <= 0 || col >= 4 - k)
-		return;
-
-	posr = row;
-	posc = col;
-	startr = row - 1;
-	startc = col + k;
-
-
-	while (row >= 1 && col <= 4 - k)
-	{
-		col = col + k;
-		row--;
-
-		if (max < mat[row][col]) {
-			posr = row;
-			posc = col;
-			max = mat[row][col];
+		for (int j = 0; j < 5; j++)
+		{
+			temp[j] = mat[4 - j][0 + j];
 		}
 
+		for (int i = 0; i < 3; i++)
+		{
+			mid_max = -1;
+			for (int j = i; j < 5; j++)
+			{
+				if (mid_max <= temp[j]) {
+					mid_max = temp[j];
+					pos = j;
+				}
+			}
+			tp = temp[i];
+			temp[i] = temp[pos];
+			temp[pos] = tp;
 
+
+			//for (int j = 0; j < 5; j++)
+			//{
+			//	printf("%d\t",temp[j]);
+			//}
+			//printf("\n");
+		}
+
+		
+
+	mid = temp[2];
+
+	//s=5
+	for (int i = 0; i < 4; i++)
+	{
+		if (min > mat[4 - i][1 + i]) min = mat[4 - i][1 + i];
 	}
 
-	temp = mat[startr][startc];
-	mat[startr][startc] = mat[posr][posc];
-	mat[posr][posc] = temp;
+	//printf("\nmin=%d mid=%d max=%d\n",min,mid,max);
+
+	//s=6
+	if (max >= mid && mid >= min) return mid;
+	if (max <= mid && mid <= min) return mid;
+	
+	if (min >= max && max >= mid) return max;
+	if (min <= max && max <= mid) return max;
+
+	if (max >= min && min >= mid) return min;
+	if (max <= min && min <= mid) return min;
 
 
-	step_offset++;
-	sort_diagonals(mat, k, s, step_offset);
 }
 
-using namespace std;
+//========================================================================================
+
 int median_filter_ref(int matrix[FILTER_SIZE][FILTER_SIZE]) {
-	int arr[FILTER_SIZE*FILTER_SIZE];
+	int arr[FILTER_SIZE * FILTER_SIZE];
 	int cnt = 0;
 
 	for (int i = 0; i < FILTER_SIZE; i++)
@@ -159,11 +246,11 @@ int median_filter_ref(int matrix[FILTER_SIZE][FILTER_SIZE]) {
 	int temp;
 
 
-	for (int i = 0; i < FILTER_SIZE*FILTER_SIZE; i++)
+	for (int i = 0; i < FILTER_SIZE * FILTER_SIZE; i++)
 	{
 		pos = i;
 		min = 256;
-		for (int j = i; j < FILTER_SIZE*FILTER_SIZE; j++)
+		for (int j = i; j < FILTER_SIZE * FILTER_SIZE; j++)
 		{
 			if (min > arr[j])
 			{
@@ -177,60 +264,10 @@ int median_filter_ref(int matrix[FILTER_SIZE][FILTER_SIZE]) {
 		arr[pos] = temp;
 	}
 
+	//for (int i = 0; i < FILTER_SIZE* FILTER_SIZE; i++)
+	//{
+	//	printf("%d => %d\n",i,arr[i]);
+	//}
 
-	return arr[(FILTER_SIZE*FILTER_SIZE - 1) / 2];
-}
-
-int sort_diagonals_shortcut(int mat[FILTER_SIZE][FILTER_SIZE]) {
-	//line to be sorted: s=k*r+c
-	// k=1 s=[3,4,5]  || k=2 s=[6]
-
-	int mid_max = -1;
-	int temp;
-	int pos;
-
-	int max = -1;
-	int mid = -1;
-	int min = 256;
-
-	//s=3
-	for (int i = 0; i < 4; i++)
-	{
-		if (max < mat[3 - i][0 + i]) max = mat[3 - i][0 + i];
-	}
-
-	//s=4
-	for (int i = 0; i < 3; i++)
-	{
-		int mid_max = -1;
-		for (int j = i; j < 5; j++)
-		{
-			if (mid_max < mat[4 - j][0 + j]) {
-				mid_max = mat[4 - j][0 + j]; 
-				pos = j;
-			}
-		}
-		temp = mat[4 - i][0 + i];
-		mat[4 - i][0 + i] = mat[4 - pos][0 + pos];
-		mat[4 - pos][0 + pos]= mat[4 - i][0 + i];
-	}
-	mid = mat[2][2];
-
-	//s=5
-	for (int i = 0; i < 4; i++)
-	{
-		if (min > mat[4 - i][1 + i]) min = mat[4 - i][1 + i];
-	}
-
-	//s=6
-	if (max >= mid && mid >= min) return mid;
-	if (max <= mid && mid <= min) return mid;
-	
-	if (min >= max && max >= mid) return max;
-	if (min <= max && max <= mid) return max;
-
-	if (max >= min && min >= mid) return min;
-	if (max <= min && min <= mid) return min;
-
-
+	return arr[(FILTER_SIZE * FILTER_SIZE - 1) / 2];
 }

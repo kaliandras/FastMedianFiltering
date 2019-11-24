@@ -41,9 +41,9 @@ void img_filter(int imgHeight, int imgWidth, int imgWidthF, unsigned char *imgSr
 			}
 
 			//filtering
-			ch_result[0] = median_filter(R);
-			ch_result[1] = median_filter(G);
-			ch_result[2] = median_filter(B);
+			ch_result[0] = median_filter_ref(R);
+			ch_result[1] = median_filter_ref(G);
+			ch_result[2] = median_filter_ref(B);
 
 			//saveing results
 			*(imgDst + wr_base + 0) = (unsigned char)(ch_result[0]);
@@ -116,8 +116,10 @@ void img_filter_test(int imgHeight, int imgWidth, int imgWidthF, unsigned char *
 	int G[FILTER_SIZE][FILTER_SIZE];
 	int B[FILTER_SIZE][FILTER_SIZE];
 
-	int error_cnt = 0;
+	int E[FILTER_SIZE][FILTER_SIZE];
 
+	int error_cnt = 0;
+	bool error = false;
 
 	//traversing trough the image
 	for (int row = 0; row < imgHeight; row++)
@@ -137,6 +139,7 @@ void img_filter_test(int imgHeight, int imgWidth, int imgWidthF, unsigned char *
 				{
 					//creating matrices for every channel so we can filter them 
 					R[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 0));
+					E[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 0));
 					G[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 1));
 					B[fy][fx] = (short)(*(imgSrcExt + rd_base + window_offset + 2));
 
@@ -151,8 +154,21 @@ void img_filter_test(int imgHeight, int imgWidth, int imgWidthF, unsigned char *
 			ch_result[2] = median_filter_ref(B);
 
 			//detect errors in filtering:
-			if (median_filter(R) != ch_result[0]) { 
+			if (median_filter(R) != ch_result[0] && !error) { 
+				printf("\nError in matrix:\n");
+				for (int i = 0; i < 5; i++)
+				{
+					for (int j = 0; j < 5; j++)
+					{
+						printf("%d\t",E[i][j]);
+					}
+					printf("\n");
+				}
+
+				printf("ref=%d error=%d\n", ch_result[0], median_filter(R));
+
 				error_cnt++;
+				error = true;
 				//printf("ERROR:pos:%d row:%d col:%d", rd_base, rd_base%imgWidthF,rd_base-rd_base%imgWidthF*imgWidthF);
 			}
 
