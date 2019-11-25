@@ -22,12 +22,3 @@ Plain C implementation:
 	It loads and saves an image with the DevIL library, the image is passed through the img_filter() function. 
 	It will step through the image, while it separates color channels and creates matrices for the filtering. 
 	The filtering is preformed for every color channel, separatly with the median_filter() function.
-	
-	TODO:
-	1. testing for errors
-	2. implementing partial sorting for sorting rows
-	3. eliminating diagonal sorting, and replacing it with shortened commands: 
-		s=3 find max
-		s=4 find median
-		s=5 find min
-		s=6 find median
